@@ -58,8 +58,8 @@ cargo test               # unit + doc tests
 cargo run --release --example eval
 ```
 
-Prints summary tables and writes `eval_results.csv`. The sweep covers two
-experiments with fixed seed (`42`) and 1000 iterations per configuration:
+Prints summary tables and writes `eval_results.csv`. The sweep uses a fixed seed
+(`42`) and covers two experiments:
 
 | Parameter            | Values                  |
 |----------------------|-------------------------|
@@ -74,7 +74,11 @@ vcr_gen_time_us, vcr_verify_time_us, vcr_size_bytes,
 vcr_zero_bytes, vcr_nonzero_bytes, calldata_gas_estimate
 ```
 
-Size and gas are deterministic; timing values depend on hardware.
+Record **size and gas are deterministic** and are the authoritative outputs of this
+harness. The timing columns (`vcr_gen_time_us`, `vcr_verify_time_us`) are an
+informal 1000-iteration mean for a quick sanity check only — for reported timing
+numbers use `cargo bench` (see below), which adds a warm-up phase and 95%
+confidence intervals.
 
 ## Benchmarks
 
@@ -82,8 +86,11 @@ Size and gas are deterministic; timing values depend on hardware.
 cargo bench
 ```
 
-Runs Criterion benchmarks for tree construction, GenNP, GenVCR, and VerifyVCR.
-HTML reports are written to `target/criterion/report/index.html`.
+Criterion benchmarks are the source for the **reported execution-time numbers**
+(GenVCR and VerifyVCR), covering both the policy-count sweep (`k`, at N=10K) and the
+watchlist-size sweep (`N`, at k=1); tree construction and GenNP are benchmarked as
+well. Each result is a mean with a 95% confidence interval. HTML reports are written
+to `target/criterion/report/index.html`.
 
 ## Dependencies
 
